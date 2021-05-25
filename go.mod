@@ -1,4 +1,4 @@
-module github.com/rpcxio/rpcx-nacus
+module github.com/rpcxio/rpcx-nacos
 
 go 1.16
 
