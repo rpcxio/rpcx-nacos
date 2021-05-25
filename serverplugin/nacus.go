@@ -27,20 +27,10 @@ type NacosRegisterPlugin struct {
 	Services []string
 
 	namingClient naming_client.INamingClient
-
-	dying chan struct{}
-	done  chan struct{}
 }
 
 // Start starts to connect consul cluster
 func (p *NacosRegisterPlugin) Start() error {
-	if p.done == nil {
-		p.done = make(chan struct{})
-	}
-	if p.dying == nil {
-		p.dying = make(chan struct{})
-	}
-
 	namingClient, err := clients.CreateNamingClient(map[string]interface{}{
 		"clientConfig":  p.ClientConfig,
 		"serverConfigs": p.ServerConfig,
@@ -72,9 +62,6 @@ func (p *NacosRegisterPlugin) Stop() error {
 			log.Errorf("faield to deregister %s: %v", name, err)
 		}
 	}
-
-	close(p.dying)
-	<-p.done
 
 	return nil
 }
@@ -150,7 +137,7 @@ func (p *NacosRegisterPlugin) Unregister(name string) (err error) {
 		return err
 	}
 
-	var services = make([]string, 0, len(p.Services)-1)
+	services := make([]string, 0, len(p.Services)-1)
 	for _, s := range p.Services {
 		if s != name {
 			services = append(services, s)

@@ -45,6 +45,7 @@ func NewNacosDiscovery(servicePath string, cluster string, clientConfig constant
 		Cluster:      cluster,
 		ClientConfig: clientConfig,
 		ServerConfig: serverConfig,
+		stopCh:       make(chan struct{}),
 	}
 
 	namingClient, err := clients.CreateNamingClient(map[string]interface{}{
@@ -151,7 +152,7 @@ func (d *NacosDiscovery) watch() {
 	param := &vo.SubscribeParam{
 		ServiceName: d.servicePath,
 		Clusters:    []string{d.Cluster},
-		SubscribeCallback: func(services []model.Instance, err error) {
+		SubscribeCallback: func(services []model.SubscribeService, err error) {
 			pairs := make([]*client.KVPair, 0, len(services))
 			for _, inst := range services {
 				network := inst.Metadata["network"]
