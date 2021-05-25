@@ -7,7 +7,6 @@ env:
   - GO111MODULE=on
 
 before_script:
-  - rm -f go.sum
   - go get -v github.com/rpcxio/rpcx-nacos/...
   - go get github.com/mattn/goveralls
 
