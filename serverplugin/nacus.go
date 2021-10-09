@@ -21,6 +21,7 @@ type NacosRegisterPlugin struct {
 	// nacos server config
 	ServerConfig []constant.ServerConfig
 	Cluster      string
+	Group        string
 	Weight       float64
 
 	// Registered services
@@ -49,13 +50,13 @@ func (p *NacosRegisterPlugin) Stop() error {
 	_, ip, port, _ := util.ParseRpcxAddress(p.ServiceAddress)
 
 	for _, name := range p.Services {
-
 		inst := vo.DeregisterInstanceParam{
 			Ip:          ip,
 			Ephemeral:   true,
 			Port:        uint64(port),
 			ServiceName: name,
 			Cluster:     p.Cluster,
+			GroupName:   p.Group,
 		}
 		_, err := p.namingClient.DeregisterInstance(inst)
 		if err != nil {
@@ -88,6 +89,7 @@ func (p *NacosRegisterPlugin) Register(name string, rcvr interface{}, metadata s
 		ServiceName: name,
 		Metadata:    meta,
 		ClusterName: p.Cluster,
+		GroupName:   p.Group,
 		Weight:      p.Weight,
 		Enable:      true,
 		Healthy:     true,
@@ -130,6 +132,7 @@ func (p *NacosRegisterPlugin) Unregister(name string) (err error) {
 		Port:        uint64(port),
 		ServiceName: name,
 		Cluster:     p.Cluster,
+		GroupName:   p.Group,
 	}
 	_, err = p.namingClient.DeregisterInstance(inst)
 	if err != nil {

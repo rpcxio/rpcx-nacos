@@ -24,6 +24,7 @@ type NacosDiscovery struct {
 	// nacos server config
 	ServerConfig []constant.ServerConfig
 	Cluster      string
+	Group        string
 
 	namingClient naming_client.INamingClient
 
@@ -39,10 +40,11 @@ type NacosDiscovery struct {
 }
 
 // NewNacosDiscovery returns a new NacosDiscovery.
-func NewNacosDiscovery(servicePath string, cluster string, clientConfig constant.ClientConfig, serverConfig []constant.ServerConfig) (client.ServiceDiscovery, error) {
+func NewNacosDiscovery(servicePath, cluster, group string, clientConfig constant.ClientConfig, serverConfig []constant.ServerConfig) (client.ServiceDiscovery, error) {
 	d := &NacosDiscovery{
 		servicePath:  servicePath,
 		Cluster:      cluster,
+		Group:        group,
 		ClientConfig: clientConfig,
 		ServerConfig: serverConfig,
 		stopCh:       make(chan struct{}),
@@ -64,10 +66,11 @@ func NewNacosDiscovery(servicePath string, cluster string, clientConfig constant
 	return d, nil
 }
 
-func NewNacosDiscoveryWithClient(servicePath string, cluster string, namingClient naming_client.INamingClient) client.ServiceDiscovery {
+func NewNacosDiscoveryWithClient(servicePath, cluster, group string, namingClient naming_client.INamingClient) client.ServiceDiscovery {
 	d := &NacosDiscovery{
 		servicePath: servicePath,
 		Cluster:     cluster,
+		Group:       group,
 	}
 
 	d.namingClient = namingClient
@@ -81,6 +84,7 @@ func (d *NacosDiscovery) fetch() {
 	service, err := d.namingClient.GetService(vo.GetServiceParam{
 		ServiceName: d.servicePath,
 		Clusters:    []string{d.Cluster},
+		GroupName:   d.Group,
 	})
 	if err != nil {
 		log.Errorf("failed to get service %s: %v", d.servicePath, err)
@@ -106,7 +110,7 @@ func (d *NacosDiscovery) fetch() {
 
 // Clone clones this ServiceDiscovery with new servicePath.
 func (d *NacosDiscovery) Clone(servicePath string) (client.ServiceDiscovery, error) {
-	return NewNacosDiscovery(servicePath, d.Cluster, d.ClientConfig, d.ServerConfig)
+	return NewNacosDiscovery(servicePath, d.Cluster, d.Group, d.ClientConfig, d.ServerConfig)
 }
 
 // SetFilter sets the filer.
@@ -152,6 +156,7 @@ func (d *NacosDiscovery) watch() {
 	param := &vo.SubscribeParam{
 		ServiceName: d.servicePath,
 		Clusters:    []string{d.Cluster},
+		GroupName:   d.Group,
 		SubscribeCallback: func(services []model.SubscribeService, err error) {
 			pairs := make([]*client.KVPair, 0, len(services))
 			for _, inst := range services {
