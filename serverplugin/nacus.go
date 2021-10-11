@@ -50,7 +50,6 @@ func (p *NacosRegisterPlugin) Stop() error {
 	_, ip, port, _ := util.ParseRpcxAddress(p.ServiceAddress)
 
 	for _, name := range p.Services {
-
 		inst := vo.DeregisterInstanceParam{
 			Ip:          ip,
 			Ephemeral:   true,
