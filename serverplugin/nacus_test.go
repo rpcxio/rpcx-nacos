@@ -35,6 +35,7 @@ func TestNacos(t *testing.T) {
 		ClientConfig:   clientConfig,
 		ServerConfig:   serverConfig,
 		Cluster:        "test",
+		Group:          "test_group",
 	}
 	err := r.Start()
 	assert.NoError(t, err)
@@ -43,7 +44,7 @@ func TestNacos(t *testing.T) {
 	err = r.Register("Arith", nil, "")
 	assert.NoError(t, err)
 
-	d, err := client.NewNacosDiscovery("Arith", "test", clientConfig, serverConfig)
+	d, err := client.NewNacosDiscovery("Arith", "test", "test_group", clientConfig, serverConfig)
 	d.WatchService()
 	assert.NoError(t, err)
 	pairs := d.GetServices()
