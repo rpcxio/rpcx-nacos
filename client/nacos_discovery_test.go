@@ -44,7 +44,6 @@ func TestNacosDiscovery(t *testing.T) {
 		Port:        8848,
 		ServiceName: "Arith",
 		ClusterName: "test",
-		GroupName:   "test_group",
 		Weight:      10,
 		Enable:      true,
 		Healthy:     true,
@@ -56,7 +55,7 @@ func TestNacosDiscovery(t *testing.T) {
 
 	time.Sleep(100 * time.Millisecond)
 
-	d, err := NewNacosDiscovery("Arith", "test", "test_group", clientConfig, serverConfig)
+	d, err := NewNacosDiscovery("Arith", "test", clientConfig, serverConfig)
 	d.WatchService()
 	assert.NoError(t, err)
 	pairs := d.GetServices()
