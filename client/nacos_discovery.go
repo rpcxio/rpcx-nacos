@@ -5,11 +5,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nacos-group/nacos-sdk-go/clients"
-	"github.com/nacos-group/nacos-sdk-go/clients/naming_client"
-	"github.com/nacos-group/nacos-sdk-go/common/constant"
-	"github.com/nacos-group/nacos-sdk-go/model"
-	"github.com/nacos-group/nacos-sdk-go/vo"
+	"github.com/nacos-group/nacos-sdk-go/v2/clients"
+	"github.com/nacos-group/nacos-sdk-go/v2/clients/naming_client"
+	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
+	"github.com/nacos-group/nacos-sdk-go/v2/model"
+	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 	"github.com/smallnest/rpcx/client"
 	"github.com/smallnest/rpcx/log"
 	"github.com/smallnest/rpcx/util"
@@ -157,7 +157,7 @@ func (d *NacosDiscovery) watch() {
 		ServiceName: d.servicePath,
 		Clusters:    []string{d.Cluster},
 		GroupName:   d.Group,
-		SubscribeCallback: func(services []model.SubscribeService, err error) {
+		SubscribeCallback: func(services []model.Instance, err error) {
 			pairs := make([]*client.KVPair, 0, len(services))
 			for _, inst := range services {
 				network := inst.Metadata["network"]
