@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/nacos-group/nacos-sdk-go/common/constant"
+	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
 	"github.com/rpcxio/rpcx-nacos/client"
 	"github.com/stretchr/testify/assert"
 )
